@@ -1,268 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>First Hour — Identity Theft Victim Assistant</title>
-  <style>
-    :root {
-      --primary-blue: #1a4f8b;
-      --primary-dark: #0f3460;
-      --accent-blue: #2980b9;
-      --bg-gray: #f4f6f9;
-      --surface: #ffffff;
-      --text-dark: #2c3e50;
-      --text-muted: #596a7a;
-      --danger: #c0392b;
-      --warning-bg: #fff3cd;
-      --warning-border: #ffeeba;
-      --warning-text: #856404;
-      --success: #27ae60;
-      --border-color: #dcdfe6;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
-    body { background-color: var(--bg-gray); color: var(--text-dark); line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; }
-    header { background-color: var(--primary-blue); color: #ffffff; padding: 1.5rem 1rem; position: relative; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
-    .header-content { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.5rem; }
-    .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-    h1 { font-size: 1.4rem; font-weight: 700; }
-    .lang-toggle { background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff; padding: 0.35rem 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
-    .lang-toggle:hover { background-color: rgba(255, 255, 255, 0.3); }
-    .sub-banner { background-color: rgba(0, 0, 0, 0.2); padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.82rem; display: inline-block; width: fit-content; }
-    main { flex: 1; max-width: 900px; width: 100%; margin: 1.5rem auto; padding: 0 1rem; }
-    .nav-buttons { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .btn { padding: 0.7rem 1.4rem; border: none; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
-    .btn-primary { background-color: var(--primary-blue); color: #ffffff; }
-    .btn-primary:hover { background-color: var(--primary-dark); }
-    .btn-secondary { background-color: #ffffff; color: var(--primary-blue); border: 1px solid var(--primary-blue); }
-    .btn-secondary:hover { background-color: #eef3f9; }
-    .card { background: var(--surface); border-radius: 8px; border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); }
-    .ai-badge { display: inline-block; font-size: 0.75rem; color: #7f8c8d; background: #eef2f5; padding: 0.2rem 0.5rem; border-radius: 3px; margin-bottom: 0.8rem; font-weight: 500; border: 1px solid #d5dbdb; }
-    .step-indicator { font-size: 0.85rem; color: var(--accent-blue); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem; }
-    .question-title { font-size: 1.15rem; margin-bottom: 0.8rem; font-weight: 600; }
-    .btn-group { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
-    .form-group { margin-bottom: 1.2rem; }
-    label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.35rem; }
-    select, input[type="text"] { width: 100%; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.95rem; background-color: #fff; }
-    .alert-box { padding: 1rem; border-radius: 6px; margin: 1rem 0; border-left: 4px solid transparent; }
-    .alert-warning { background-color: var(--warning-bg); border-color: var(--warning-text); color: var(--warning-text); }
-    .alert-danger { background-color: #fde8e8; border-color: var(--danger); color: #9b1c1c; }
-    .priority-badge { display: inline-block; padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; }
-    .priority-urgent { background-color: #fde8e8; color: var(--danger); border: 1px solid var(--danger); }
-    .priority-standard { background-color: #fef08a; color: #854d0e; border: 1px solid #ca8a04; }
-    .priority-routine { background-color: #dcfce7; color: var(--success); border: 1px solid var(--success); }
-    .checklist { list-style: none; margin: 1rem 0; }
-    .checklist-item { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.2rem; }
-    .checklist-item:last-child { border-bottom: none; }
-    .institution-tag { font-weight: 700; color: var(--primary-blue); font-size: 0.9rem; }
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; }
-    th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
-    th { background-color: #eef3f9; font-weight: 600; }
-    footer { background-color: #e2e8f0; padding: 1.25rem 1rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: auto; border-top: 1px solid var(--border-color); }
-    .hidden { display: none !important; }
-    @media print { header, .nav-buttons, .lang-toggle, footer, .btn { display: none !important; } body { background-color: #ffffff; } .card { border: 1px solid #000; box-shadow: none; margin: 0 0 1rem 0; padding: 1rem; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Hour — Identity Theft Victim Assistant</title>
+<style>
+:root{--primary-blue:#1a4f8b;--primary-dark:#0f3460;--accent-blue:#2980b9;--bg-gray:#f4f6f9;--surface:#ffffff;--text-dark:#2c3e50;--text-muted:#596a7a;--danger:#c0392b;--warning-bg:#fff3cd;--warning-text:#856404;--success:#27ae60;--border-color:#dcdfe6;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+body{background:var(--bg-gray);color:var(--text-dark);line-height:1.5;display:flex;flex-direction:column;min-height:100vh;}
+header{background:var(--primary-blue);color:#fff;padding:1.5rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.header-content{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:.5rem;}
+.header-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+h1{font-size:1.4rem;font-weight:700;}
+.lang-toggle{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:.35rem .75rem;border-radius:4px;cursor:pointer;font-weight:600;font-size:.85rem;}
+.sub-banner{background:rgba(0,0,0,.2);padding:.35rem .75rem;border-radius:4px;font-size:.82rem;display:inline-block;width:fit-content;}
+main{flex:1;max-width:900px;width:100%;margin:1.5rem auto;padding:0 1rem;}
+.nav-buttons{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.btn{padding:.7rem 1.4rem;border:none;border-radius:6px;font-weight:600;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}
+.btn-primary{background:var(--primary-blue);color:#fff;}
+.btn-secondary{background:#fff;color:var(--primary-blue);border:1px solid var(--primary-blue);}
+.card{background:var(--surface);border-radius:8px;border:1px solid var(--border-color);padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.ai-badge{display:inline-block;font-size:.75rem;color:#7f8c8d;background:#eef2f5;padding:.2rem .5rem;border-radius:3px;margin-bottom:.8rem;font-weight:500;border:1px solid #d5dbdb;}
+.step-indicator{font-size:.85rem;color:var(--accent-blue);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;}
+.question-title{font-size:1.15rem;margin-bottom:.8rem;font-weight:600;}
+.btn-group{display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;}
+.form-group{margin-bottom:1.2rem;}
+label{display:block;font-weight:600;font-size:.9rem;margin-bottom:.35rem;}
+select{width:100%;padding:.6rem;border:1px solid var(--border-color);border-radius:4px;font-size:.95rem;background:#fff;}
+.alert-box{padding:1rem;border-radius:6px;margin:1rem 0;border-left:4px solid transparent;}
+.alert-warning{background:var(--warning-bg);border-color:var(--warning-text);color:var(--warning-text);}
+.alert-danger{background:#fde8e8;border-color:var(--danger);color:#9b1c1c;}
+.priority-badge{display:inline-block;padding:.3rem .75rem;border-radius:20px;font-weight:700;font-size:.85rem;text-transform:uppercase;}
+.priority-urgent{background:#fde8e8;color:var(--danger);border:1px solid var(--danger);}
+.priority-standard{background:#fef08a;color:#854d0e;border:1px solid #ca8a04;}
+.priority-routine{background:#dcfce7;color:var(--success);border:1px solid var(--success);}
+.checklist{list-style:none;margin:1rem 0;}
+.checklist-item{padding:.8rem 1rem;border-bottom:1px solid var(--border-color);}
+.checklist-item:last-child{border-bottom:none;}
+.institution-tag{font-weight:700;color:var(--primary-blue);font-size:.9rem;}
+table{width:100%;border-collapse:collapse;margin-top:.8rem;}
+th,td{padding:.75rem;text-align:left;border-bottom:1px solid var(--border-color);font-size:.9rem;}
+th{background:#eef3f9;font-weight:600;}
+footer{background:#e2e8f0;padding:1.25rem 1rem;text-align:center;font-size:.85rem;color:var(--text-muted);margin-top:auto;border-top:1px solid var(--border-color);}
+.hidden{display:none !important;}
+</style>
 </head>
 <body>
 
-  <header>
-    <div class="header-content">
-      <div class="header-top">
-        <h1 id="app-title">First Hour — Identity Theft Victim Assistant</h1>
-        <button id="lang-btn" class="lang-toggle" onclick="toggleLanguage()">Español</button>
-      </div>
-      <div class="sub-banner" id="app-banner">Simulated data. We do not store personal data.</div>
+<header>
+  <div class="header-content">
+    <div class="header-top">
+      <h1 id="app-title">First Hour — Identity Theft Victim Assistant</h1>
+      <button id="lang-btn" class="lang-toggle" onclick="toggleLanguage()">Español</button>
     </div>
-  </header>
+    <div class="sub-banner" id="app-banner">Simulated data. We do not store personal data.</div>
+  </div>
+</header>
 
-  <main>
-    <div class="nav-buttons">
-      <button class="btn btn-primary" id="btn-nav-intake" onclick="showIntakeSection()">Start Intake</button>
-      <button class="btn btn-secondary" id="btn-nav-wait" onclick="showWaitTimesSection()">View Wait Times</button>
+<main>
+  <div class="nav-buttons">
+    <button class="btn btn-primary" id="btn-nav-intake" onclick="showIntakeSection()">Start Intake</button>
+    <button class="btn btn-secondary" id="btn-nav-wait" onclick="showWaitTimesSection()">View Wait Times</button>
+  </div>
+
+  <section id="wait-times-section" class="card hidden">
+    <div class="ai-badge">AI-generated — review before use</div>
+    <h2 style="margin-bottom:.5rem;" id="wait-title">Institutional Wait Times (Simulated)</h2>
+    <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:1rem;" id="wait-subtitle">Operational benchmark estimates for public service desks across Mexico.</p>
+    <table>
+      <thead><tr><th id="th-inst">Institution</th><th id="th-channel">Channel</th><th id="th-wait">Estimated Time</th><th id="th-status">Current Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Cyber Police</strong></td><td id="row-pc-c">Phone Assistance (089 / Local Line)</td><td id="row-pc-w">5 to 15 minutes</td><td><span style="color:var(--success);font-weight:600;" id="row-pc-s">Active intake</span></td></tr>
+        <tr><td><strong>State Prosecutor's Office</strong></td><td id="row-fg-c">Intake Desk / Public Prosecutor</td><td id="row-fg-w">2 to 4 hours in person</td><td><span style="color:#ca8a04;font-weight:600;" id="row-fg-s">Moderate queue</span></td></tr>
+        <tr><td><strong>INE Module</strong></td><td id="row-ine-c">In-Person Desk (Theft Module)</td><td id="row-ine-w">With appointment: 20 min / Walk-in: 1 to 2 hours</td><td><span style="color:var(--success);font-weight:600;" id="row-ine-s">Normal operations</span></td></tr>
+        <tr><td><strong>CONDUSEF</strong></td><td id="row-con-c">Online Dispute Portal / Chat</td><td id="row-con-w">Initial response within 24 to 48 business hrs</td><td><span style="color:#ca8a04;font-weight:600;" id="row-con-s">Standard processing</span></td></tr>
+        <tr><td><strong>Bank / Fintech</strong></td><td id="row-bank-c">Fraud Prevention Hotline</td><td id="row-bank-w">10 to 25 minutes</td><td><span style="color:var(--danger);font-weight:600;" id="row-bank-s">High phone volume</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="step-device" class="card">
+    <div class="ai-badge">AI-generated — review before use</div>
+    <div class="step-indicator" id="ind-step-1">Step 1: Environment Diagnostic</div>
+    <h2 class="question-title" id="q-device">Is your current device safe?</h2>
+    <p style="font-size:.95rem;margin-bottom:1rem;color:var(--text-muted);" id="q-device-desc">A device is unsafe if the screen acts on its own, you received dozens of unsolicited codes, or you suspect it is monitored or shared with the attacker.</p>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="handleDeviceSecurity(true)" id="btn-device-yes">Yes, this phone or computer is safe</button>
+      <button class="btn btn-secondary" onclick="handleDeviceSecurity(false)" id="btn-device-no">No, I do not trust this device</button>
     </div>
+  </section>
 
-    <section id="wait-times-section" class="card hidden">
-      <div class="ai-badge" data-i18n="ai-tag">AI-generated — review before use</div>
-      <h2 style="margin-bottom: 0.5rem;" id="wait-title">Institutional Wait Times (Simulated)</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;" id="wait-subtitle">Operational benchmark estimates for public service desks across Mexico.</p>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr><th id="th-inst">Institution</th><th id="th-channel">Channel</th><th id="th-wait">Estimated Time</th><th id="th-status">Current Status</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><strong>Cyber Police</strong></td><td id="row-pc-c">Phone Assistance (089 / Local Line)</td><td id="row-pc-w">5 to 15 minutes</td><td><span style="color: var(--success); font-weight: 600;" id="row-pc-s">Active intake</span></td></tr>
-            <tr><td><strong>State Prosecutor's Office</strong></td><td id="row-fg-c">Intake Desk / Public Prosecutor</td><td id="row-fg-w">2 to 4 hours in person</td><td><span style="color: #ca8a04; font-weight: 600;" id="row-fg-s">Moderate queue</span></td></tr>
-            <tr><td><strong>INE Module</strong></td><td id="row-ine-c">In-Person Desk (Theft Module)</td><td id="row-ine-w">With appointment: 20 min / Walk-in: 1 to 2 hours</td><td><span style="color: var(--success); font-weight: 600;" id="row-ine-s">Normal operations</span></td></tr>
-            <tr><td><strong>CONDUSEF</strong></td><td id="row-con-c">Online Dispute Portal / Chat</td><td id="row-con-w">Initial response within 24 to 48 business hrs</td><td><span style="color: #ca8a04; font-weight: 600;" id="row-con-s">Standard processing</span></td></tr>
-            <tr><td><strong>Bank / Fintech</strong></td><td id="row-bank-c">Fraud Prevention Hotline</td><td id="row-bank-w">10 to 25 minutes</td><td><span style="color: var(--danger); font-weight: 600;" id="row-bank-s">High phone volume</span></td></tr>
-          </tbody>
-        </table>
+  <section id="step-unsafe-device" class="card hidden">
+    <div class="ai-badge">AI-generated — review before use</div>
+    <div class="alert-box alert-danger">
+      <h3 style="margin-bottom:.5rem;" id="unsafe-alert-title">Compromised Device Protocol</h3>
+      <p id="unsafe-alert-desc">For your operational safety, do not submit incident forms or open recovery emails on this machine. Inputs could be intercepted.</p>
+    </div>
+    <h4 style="margin:1rem 0 .5rem 0;" id="unsafe-steps-title">Immediate Safe Path:</h4>
+    <ol style="margin-left:1.5rem;margin-bottom:1.5rem;font-size:.95rem;">
+      <li style="margin-bottom:.5rem;" id="unsafe-li-1"><strong>Use a trusted person's phone:</strong> In person, ask a close family member, neighbor, or colleague to lend you their phone for official calls.</li>
+      <li style="margin-bottom:.5rem;" id="unsafe-li-2"><strong>Printable emergency route:</strong> If heading directly to intake offices, print this guide at a nearby internet café or print shop.</li>
+      <li style="margin-bottom:.5rem;" id="unsafe-li-3"><strong>Never share verification codes on inbound calls:</strong> If an unknown caller claims to be tech support, hang up immediately.</li>
+    </ol>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="window.print()" id="btn-print-route">Print Emergency Route</button>
+      <button class="btn btn-secondary" onclick="resetToDeviceCheck()" id="btn-back-check">Back to Verification</button>
+    </div>
+  </section>
+
+  <section id="step-questions" class="card hidden">
+    <div class="ai-badge">AI-generated — review before use</div>
+    <div class="step-indicator" id="ind-step-2">Step 2: Operational Evaluation</div>
+    <h2 class="question-title" id="q-eval-title">Four Initial Questions</h2>
+    <p style="font-size:.9rem;color:var(--text-muted);margin-bottom:1.2rem;" id="q-eval-desc">Do not enter usernames, passwords, bank pins, or sensitive identity documents.</p>
+    <form onsubmit="event.preventDefault();processTriage();">
+      <div class="form-group">
+        <label id="label-q1">1. What primarily happened?</label>
+        <select id="q1-what">
+          <option value="account_takeover">They took over my account (Facebook, WhatsApp, email) and I am locked out</option>
+          <option value="impersonation">They are impersonating me and asking friends and family for money</option>
+          <option value="unknown_account">An unknown bank account, credit, or fintech app was opened in my name</option>
+          <option value="exposure_worry">My voter ID (INE) or passport photos were leaked or I fear identity fraud</option>
+        </select>
       </div>
-    </section>
-
-    <section id="step-device" class="card">
-      <div class="ai-badge" data-i18n="ai-tag">AI-generated — review before use</div>
-      <div class="step-indicator" id="ind-step-1">Step 1: Environment Diagnostic</div>
-      <h2 class="question-title" id="q-device">Is your current device safe?</h2>
-      <p style="font-size: 0.95rem; margin-bottom: 1rem; color: var(--text-muted);" id="q-device-desc">A device is unsafe if the screen acts on its own, you received dozens of unsolicited codes, or you suspect it is monitored or shared with the attacker.</p>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="handleDeviceSecurity(true)" id="btn-device-yes">Yes, this phone or computer is safe</button>
-        <button class="btn btn-secondary" onclick="handleDeviceSecurity(false)" id="btn-device-no">No, I do not trust this device</button>
+      <div class="form-group">
+        <label id="label-q2">2. Have you already contacted an official institution?</label>
+        <select id="q2-institution">
+          <option value="none">No, I have not reached out to any institution yet</option>
+          <option value="bank">Only my bank / financial fintech</option>
+          <option value="police">Only the Cyber Police or 911</option>
+          <option value="fiscalia">I already initiated a formal report at the Public Prosecutor's Office</option>
+        </select>
       </div>
-    </section>
-
-    <section id="step-unsafe-device" class="card hidden">
-      <div class="ai-badge" data-i18n="ai-tag">AI-generated — review before use</div>
-      <div class="alert-box alert-danger">
-        <h3 id="unsafe-alert-title" style="margin-bottom: 0.5rem;">Compromised Device Protocol</h3>
-        <p id="unsafe-alert-desc">For your operational safety, do not submit incident forms or open recovery emails on this machine. Inputs could be intercepted.</p>
+      <div class="form-group">
+        <label id="label-q3">3. What is your primary concern right now?</label>
+        <select id="q3-worry">
+          <option value="money_loss">That my contacts or I lose money through instant SPEI transfers</option>
+          <option value="legal_record">That debts or crimes are registered under my official ID</option>
+          <option value="reputation">Harm to my personal reputation or continuous harassment</option>
+        </select>
       </div>
-      <h4 style="margin: 1rem 0 0.5rem 0;" id="unsafe-steps-title">Immediate Safe Path:</h4>
-      <ol style="margin-left: 1.5rem; margin-bottom: 1.5rem; font-size: 0.95rem;">
-        <li id="unsafe-li-1" style="margin-bottom: 0.5rem;"><strong>Use a trusted person's phone:</strong> In person, ask a close family member, neighbor, or colleague to lend you their phone for official calls.</li>
-        <li id="unsafe-li-2" style="margin-bottom: 0.5rem;"><strong>Printable emergency route:</strong> If heading directly to intake offices, print this guide at a nearby internet café or print shop.</li>
-        <li id="unsafe-li-3" style="margin-bottom: 0.5rem;"><strong>Never share verification codes on inbound calls:</strong> If an unknown caller claims to be tech support, hang up immediately.</li>
-      </ol>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="window.print()" id="btn-print-route">Print Emergency Route</button>
-        <button class="btn btn-secondary" onclick="resetToDeviceCheck()" id="btn-back-check">Back to Verification</button>
+      <div class="form-group">
+        <label id="label-q4">4. When did this incident start?</label>
+        <select id="q4-when">
+          <option value="first_hour">Less than one hour ago (critical first hour)</option>
+          <option value="today">Earlier today</option>
+          <option value="few_days">Several days or weeks ago</option>
+        </select>
       </div>
-    </section>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:.5rem;" id="btn-submit-triage">Evaluate Case &amp; Generate Plan</button>
+    </form>
+  </section>
 
-    <section id="step-questions" class="card hidden">
-      <div class="ai-badge" data-i18n="ai-tag">AI-generated — review before use</div>
-      <div class="step-indicator" id="ind-step-2">Step 2: Operational Evaluation</div>
-      <h2 class="question-title" id="q-eval-title">Four Initial Questions</h2>
-      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.2rem;" id="q-eval-desc">Do not enter usernames, passwords, bank pins, or sensitive identity documents.</p>
-      <form id="triage-form" onsubmit="event.preventDefault(); processTriage();">
-        <div class="form-group">
-          <label for="q1-what" id="label-q1">1. What primarily happened?</label>
-          <select id="q1-what" required>
-            <option value="account_takeover" id="opt-q1-1">They took over my account (Facebook, WhatsApp, email) and I am locked out</option>
-            <option value="impersonation" id="opt-q1-2">They are impersonating me and asking friends and family for money</option>
-            <option value="unknown_account" id="opt-q1-3">An unknown bank account, credit, or fintech app was opened in my name</option>
-            <option value="exposure_worry" id="opt-q1-4">My voter ID (INE) or passport photos were leaked or I fear identity fraud</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="q2-institution" id="label-q2">2. Have you already contacted an official institution?</label>
-          <select id="q2-institution" required>
-            <option value="none" id="opt-q2-1">No, I have not reached out to any institution yet</option>
-            <option value="bank" id="opt-q2-2">Only my bank / financial fintech</option>
-            <option value="police" id="opt-q2-3">Only the Cyber Police or 911</option>
-            <option value="fiscalia" id="opt-q2-4">I already initiated a formal report at the Public Prosecutor's Office</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="q3-worry" id="label-q3">3. What is your primary concern right now?</label>
-          <select id="q3-worry" required>
-            <option value="money_loss" id="opt-q3-1">That my contacts or I lose money through instant SPEI transfers</option>
-            <option value="legal_record" id="opt-q3-2">That debts or crimes are registered under my official ID</option>
-            <option value="reputation" id="opt-q3-3">Harm to my personal reputation or continuous harassment</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="q4-when" id="label-q4">4. When did this incident start?</label>
-          <select id="q4-when" required>
-            <option value="first_hour" id="opt-q4-1">Less than one hour ago (critical first hour)</option>
-            <option value="today" id="opt-q4-2">Earlier today</option>
-            <option value="few_days" id="opt-q4-3">Several days or weeks ago</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" id="btn-submit-triage">Evaluate Case &amp; Generate Plan</button>
-      </form>
-    </section>
-
-    <section id="step-results" class="card hidden">
-      <div class="ai-badge" data-i18n="ai-tag">AI-generated — review before use</div>
-      <div class="step-indicator" id="ind-step-3">Step 3: Classification &amp; Action Plan</div>
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.2rem;">
-        <div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);" id="res-type-label">Detected Incident Type:</div>
-          <h2 id="res-classification-title" style="color: var(--primary-blue); font-size: 1.3rem;">Active Impersonation</h2>
-        </div>
-        <div id="res-priority-badge" class="priority-badge priority-urgent">Urgent</div>
+  <section id="step-results" class="card hidden">
+    <div class="ai-badge">AI-generated — review before use</div>
+    <div class="step-indicator" id="ind-step-3">Step 3: Classification &amp; Action Plan</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.8rem;margin-bottom:1.2rem;">
+      <div>
+        <div style="font-size:.85rem;color:var(--text-muted);" id="res-type-label">Detected Incident Type:</div>
+        <h2 id="res-classification-title" style="color:var(--primary-blue);font-size:1.3rem;">Active Impersonation</h2>
       </div>
-      <div class="alert-box alert-warning" id="res-priority-rationale"><strong>Operational note:</strong> An active vector with risk of funds transfer or ongoing impersonation was detected. Actions should be taken immediately.</div>
-      <h3 style="margin: 1.5rem 0 0.5rem 0;" id="res-checklist-title">Action Checklist by Institution (4 to 6 steps):</h3>
-      <ul class="checklist" id="plan-checklist"></ul>
-      <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-        <button class="btn btn-primary" onclick="exportLocalPackage()" id="btn-export-pkg">Export Local Package</button>
-        <button class="btn btn-secondary" onclick="resetToQuestions()" id="btn-re-eval">Re-evaluate Data</button>
-      </div>
-      <div id="export-feedback" class="alert-box alert-warning hidden" style="margin-top: 1rem; font-size: 0.88rem;">
-        <span id="export-msg">File exported locally in your browser. No data was sent to any server.</span>
-      </div>
-    </section>
-  </main>
+      <div id="res-priority-badge" class="priority-badge priority-urgent">Urgent</div>
+    </div>
+    <div class="alert-box alert-warning" id="res-priority-rationale"><strong>Operational note:</strong> An active vector with risk of funds transfer or ongoing impersonation was detected. Actions should be taken immediately.</div>
+    <h3 style="margin:1.5rem 0 .5rem 0;" id="res-checklist-title">Action Checklist by Institution (4 to 6 steps):</h3>
+    <ul class="checklist" id="plan-checklist"></ul>
+    <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="exportLocalPackage()" id="btn-export-pkg">Export Local Package</button>
+      <button class="btn btn-secondary" onclick="resetToQuestions()" id="btn-re-eval">Re-evaluate Data</button>
+    </div>
+    <div id="export-feedback" class="alert-box alert-warning hidden" style="margin-top:1rem;font-size:.88rem;">
+      <span id="export-msg">File exported locally in your browser. No data was sent to any server.</span>
+    </div>
+  </section>
+</main>
 
-  <footer>
-    <p id="footer-text">This tool does not store personal data. It does not replace the police, the bank, or the Public Prosecutor's Office.</p>
-  </footer>
+<footer>
+  <p id="footer-text">This tool does not store personal data. It does not replace the police, the bank, or the Public Prosecutor's Office.</p>
+</footer>
 
-  <script>
-   let currentLang = 'en'; document.addEventListener('DOMContentLoaded', function() { applyTranslations(); });
-    let currentClassification = '';
-    let currentPriority = '';
-    let currentSteps = [];
+<script>
+let currentLang = 'en';
+let currentClassification = '';
+let currentPriority = '';
+let currentSteps = [];
 
-    const translations = {
-      es: { appTitle: "Primera Hora — Asistente para Víctimas de Robo de Identidad", appBanner: "Datos simulados. No guardamos datos personales.", langToggle: "English", navIntake: "Iniciar intake", navWait: "Ver tiempos de espera", aiTag: "Generado por IA — revisar antes de usar", waitTitle: "Estado de Espera en Instituciones (Simulado)", waitSubtitle: "Estimaciones operativas referenciales para ventanillas de atención en México.", thInst: "Institución", thChannel: "Canal", thWait: "Tiempo Estimado", thStatus: "Estatus Actual", rowPcC: "Atención Telefónica (089 / Línea Local)", rowPcW: "5 a 15 minutos", rowPcS: "Recepción activa", rowFgC: "Mesa de Trámite / Ministerio Público", rowFgW: "2 a 4 horas presenciales", rowFgS: "Carga moderada", rowIneC: "Atención Presencial (Trámite por Robo)", rowIneW: "Con cita: 20 min / Sin cita: 1 a 2 horas", rowIneS: "Operativo normal", rowConC: "Portal Queja Electrónica / Chat", rowConW: "Respuesta inicial en 24 a 48 hrs hábiles", rowConS: "Trámite ordinario", rowBankC: "Línea de Prevención de Fraudes", rowBankW: "10 a 25 minutos", rowBankS: "Alta demanda telefónica", indStep1: "Paso 1: Diagnóstico de Entorno", qDevice: "¿Tu dispositivo actual es seguro?", qDeviceDesc: "Un dispositivo se considera inseguro si la pantalla se mueve sola, recibiste docenas de códigos no solicitados, o sospechas que está intervenido o compartido con el agresor.", btnDeviceYes: "Sí, este teléfono o computadora es seguro", btnDeviceNo: "No, desconfío de este dispositivo", unsafeAlertTitle: "Protocolo de Dispositivo Comprometido", unsafeAlertDesc: "Para tu seguridad operativa, no continúes ingresando incidentes ni abriendo correos desde este equipo. La información podría ser monitoreada.", unsafeStepsTitle: "Ruta segura inmediata:", unsafeLi1: "Utiliza el teléfono de una persona de confianza: Pide un equipo prestado presencialmente a un familiar, vecino o compañero de trabajo para realizar tus reportes telefónicos.", unsafeLi2: "Ruta impresa de emergencia: Si necesitas acudir directamente a ventanillas físicas, imprime esta guía rápida en un cibercafé o papelería cercana.", unsafeLi3: "No compartas códigos en llamadas entrantes: Si el agresor llama pretendiendo ser soporte técnico, cuelga de inmediato.", btnPrintRoute: "Imprimir ruta de emergencia", btnBackCheck: "Regresar a verificación", indStep2: "Paso 2: Evaluación Operativa", qEvalTitle: "Cuatro preguntas iniciales", qEvalDesc: "No ingreses nombres de usuario, contraseñas, claves bancarias ni documentos oficiales.", labelQ1: "1. ¿Qué ocurrió principalmente?", optQ1_1: "Tomaron control de mi cuenta (Facebook, WhatsApp, correo) y no puedo entrar", optQ1_2: "Están pidiendo dinero a mis amigos y familiares en mi nombre", optQ1_3: "Abrieron una cuenta bancaria, crédito o app financiera con mi nombre/datos", optQ1_4: "Filtraron fotos de mi credencial INE/pasaporte o temo que ocurra un fraude", labelQ2: "2. ¿Ya contactaste a alguna institución oficial?", optQ2_1: "No, no he contactado a ninguna institución", optQ2_2: "Solo a mi banco / app financiera", optQ2_3: "Solo a la Policía Cibernética o 911", optQ2_4: "Ya inicié trámite ante la Fiscalía", labelQ3: "3. ¿Cuál es tu principal preocupación en este momento?", optQ3_1: "Que mis conocidos o yo perdamos dinero en transferencias SPEI", optQ3_2: "Que abran deudas o cometan delitos con mi documento oficial", optQ3_3: "Daño a mi reputación personal o acoso continuo", labelQ4: "4. ¿Cuándo comenzó el incidente?", optQ4_1: "Hace menos de una hora (primera hora crítica)", optQ4_2: "Hoy en el transcurso del día", optQ4_3: "Hace varios días o semanas", btnSubmitTriage: "Evaluar caso y generar plan", indStep3: "Paso 3: Clasificación y Hoja de Ruta", resTypeLabel: "Tipo de incidente detectado:", resChecklistTitle: "Checklist de Actuación por Institución (4 a 6 pasos):", btnExportPkg: "Exportar paquete local", btnReEval: "Reevaluar datos", exportMsg: "Archivo descargado localmente en tu navegador. No se enviaron datos a ningún servidor.", footerText: "Esta herramienta no guarda datos personales. No reemplaza a la policía, al banco ni a la Fiscalía." },
-      en: { appTitle: "First Hour — Identity Theft Victim Assistant", appBanner: "Simulated data. We do not store personal data.", langToggle: "Español", navIntake: "Start Intake", navWait: "View Wait Times", aiTag: "AI-generated — review before use", waitTitle: "Institutional Wait Times (Simulated)", waitSubtitle: "Operational benchmark estimates for public service desks across Mexico.", thInst: "Institution", thChannel: "Channel", thWait: "Estimated Time", thStatus: "Current Status", rowPcC: "Phone Assistance (089 / Local Line)", rowPcW: "5 to 15 minutes", rowPcS: "Active intake", rowFgC: "Intake Desk / Public Prosecutor", rowFgW: "2 to 4 hours in person", rowFgS: "Moderate queue", rowIneC: "In-Person Desk (Theft Module)", rowIneW: "With appointment: 20 min / Walk-in: 1 to 2 hours", rowIneS: "Normal operations", rowConC: "Online Dispute Portal / Chat", rowConW: "Initial response within 24 to 48 business hrs", rowConS: "Standard processing", rowBankC: "Fraud Prevention Hotline", rowBankW: "10 to 25 minutes", rowBankS: "High phone volume", indStep1: "Step 1: Environment Diagnostic", qDevice: "Is your current device safe?", qDeviceDesc: "A device is unsafe if the screen acts on its own, you received dozens of unsolicited codes, or you suspect it is monitored or shared with the attacker.", btnDeviceYes: "Yes, this phone or computer is safe", btnDeviceNo: "No, I do not trust this device", unsafeAlertTitle: "Compromised Device Protocol", unsafeAlertDesc: "For your operational safety, do not submit incident forms or open recovery emails on this machine. Inputs could be intercepted.", unsafeStepsTitle: "Immediate Safe Path:", unsafeLi1: "Use a trusted person's phone: In person, ask a close family member, neighbor, or colleague to lend you their phone for official calls.", unsafeLi2: "Printable emergency route: If heading directly to intake offices, print this guide at a nearby internet café or print shop.", unsafeLi3: "Never share verification codes on inbound calls: If an unknown caller claims to be tech support, hang up immediately.", btnPrintRoute: "Print Emergency Route", btnBackCheck: "Back to Verification", indStep2: "Step 2: Operational Evaluation", qEvalTitle: "Four Initial Questions", qEvalDesc: "Do not enter usernames, passwords, bank pins, or sensitive identity documents.", labelQ1: "1. What primarily happened?", optQ1_1: "They took over my account (Facebook, WhatsApp, email) and I am locked out", optQ1_2: "They are impersonating me and asking friends and family for money", optQ1_3: "An unknown bank account, credit, or fintech app was opened in my name", optQ1_4: "My voter ID (INE) or passport photos were leaked or I fear identity fraud", labelQ2: "2. Have you already contacted an official institution?", optQ2_1: "No, I have not reached out to any institution yet", optQ2_2: "Only my bank / financial fintech", optQ2_3: "Only the Cyber Police or 911", optQ2_4: "I already initiated a formal report at the Public Prosecutor's Office", labelQ3: "3. What is your primary concern right now?", optQ3_1: "That my contacts or I lose money through instant SPEI transfers", optQ3_2: "That debts or crimes are registered under my official ID", optQ3_3: "Harm to my personal reputation or continuous harassment", labelQ4: "4. When did this incident start?", optQ4_1: "Less than one hour ago (critical first hour)", optQ4_2: "Earlier today", optQ4_3: "Several days or weeks ago", btnSubmitTriage: "Evaluate Case &amp; Generate Plan", indStep3: "Step 3: Classification &amp; Action Plan", resTypeLabel: "Detected Incident Type:", resChecklistTitle: "Action Checklist by Institution (4 to 6 steps):", btnExportPkg: "Export Local Package", btnReEval: "Re-evaluate Data", exportMsg: "File exported locally in your browser. No data was sent to any server.", footerText: "This tool does not store personal data. It does not replace the police, the bank, or the Public Prosecutor's Office." }
-    };
+const T = {
+es:{
+appTitle:"Primera Hora — Asistente para Víctimas de Robo de Identidad",appBanner:"Datos simulados. No guardamos datos personales.",langToggle:"English",navIntake:"Iniciar intake",navWait:"Ver tiempos de espera",aiTag:"Generado por IA — revisar antes de usar",waitTitle:"Estado de Espera en Instituciones (Simulado)",waitSubtitle:"Estimaciones operativas referenciales para ventanillas de atención en México.",thInst:"Institución",thChannel:"Canal",thWait:"Tiempo Estimado",thStatus:"Estatus Actual",rowPcC:"Atención Telefónica (089 / Línea Local)",rowPcW:"5 a 15 minutos",rowPcS:"Recepción activa",rowFgC:"Mesa de Trámite / Ministerio Público",rowFgW:"2 a 4 horas presenciales",rowFgS:"Carga moderada",rowIneC:"Atención Presencial (Trámite por Robo)",rowIneW:"Con cita: 20 min / Sin cita: 1 a 2 horas",rowIneS:"Operativo normal",rowConC:"Portal Queja Electrónica / Chat",rowConW:"Respuesta inicial en 24 a 48 hrs hábiles",rowConS:"Trámite ordinario",rowBankC:"Línea de Prevención de Fraudes",rowBankW:"10 a 25 minutos",rowBankS:"Alta demanda telefónica",
+indStep1:"Paso 1: Diagnóstico de Entorno",qDevice:"¿Tu dispositivo actual es seguro?",qDeviceDesc:"Un dispositivo se considera inseguro si la pantalla se mueve sola, recibiste docenas de códigos no solicitados, o sospechas que está intervenido o compartido con el agresor.",btnDeviceYes:"Sí, este teléfono o computadora es seguro",btnDeviceNo:"No, desconfío de este dispositivo",
+unsafeAlertTitle:"Protocolo de Dispositivo Comprometido",unsafeAlertDesc:"Para tu seguridad operativa, no continúes ingresando incidentes ni abriendo correos desde este equipo. La información podría ser monitoreada.",unsafeStepsTitle:"Ruta segura inmediata:",btnPrintRoute:"Imprimir ruta de emergencia",btnBackCheck:"Regresar a verificación",
+indStep2:"Paso 2: Evaluación Operativa",qEvalTitle:"Cuatro preguntas iniciales",qEvalDesc:"No ingreses nombres de usuario, contraseñas, claves bancarias ni documentos oficiales.",labelQ1:"1. ¿Qué ocurrió principalmente?",labelQ2:"2. ¿Ya contactaste a alguna institución oficial?",labelQ3:"3. ¿Cuál es tu principal preocupación en este momento?",labelQ4:"4. ¿Cuándo comenzó el incidente?",btnSubmitTriage:"Evaluar caso y generar plan",
+indStep3:"Paso 3: Clasificación y Hoja de Ruta",resTypeLabel:"Tipo de incidente detectado:",resChecklistTitle:"Checklist de Actuación por Institución (4 a 6 pasos):",btnExportPkg:"Exportar paquete local",btnReEval:"Reevaluar datos",exportMsg:"Archivo descargado localmente en tu navegador. No se enviaron datos a ningún servidor.",footerText:"Esta herramienta no guarda datos personales. No reemplaza a la policía, al banco ni a la Fiscalía."
+},
+en:{
+appTitle:"First Hour — Identity Theft Victim Assistant",appBanner:"Simulated data. We do not store personal data.",langToggle:"Español",navIntake:"Start Intake",navWait:"View Wait Times",aiTag:"AI-generated — review before use",waitTitle:"Institutional Wait Times (Simulated)",waitSubtitle:"Operational benchmark estimates for public service desks across Mexico.",thInst:"Institution",thChannel:"Channel",thWait:"Estimated Time",thStatus:"Current Status",rowPcC:"Phone Assistance (089 / Local Line)",rowPcW:"5 to 15 minutes",rowPcS:"Active intake",rowFgC:"Intake Desk / Public Prosecutor",rowFgW:"2 to 4 hours in person",rowFgS:"Moderate queue",rowIneC:"In-Person Desk (Theft Module)",rowIneW:"With appointment: 20 min / Walk-in: 1 to 2 hours",rowIneS:"Normal operations",rowConC:"Online Dispute Portal / Chat",rowConW:"Initial response within 24 to 48 business hrs",rowConS:"Standard processing",rowBankC:"Fraud Prevention Hotline",rowBankW:"10 to 25 minutes",rowBankS:"High phone volume",
+indStep1:"Step 1: Environment Diagnostic",qDevice:"Is your current device safe?",qDeviceDesc:"A device is unsafe if the screen acts on its own, you received dozens of unsolicited codes, or you suspect it is monitored or shared with the attacker.",btnDeviceYes:"Yes, this phone or computer is safe",btnDeviceNo:"No, I do not trust this device",
+unsafeAlertTitle:"Compromised Device Protocol",unsafeAlertDesc:"For your operational safety, do not submit incident forms or open recovery emails on this machine. Inputs could be intercepted.",unsafeStepsTitle:"Immediate Safe Path:",btnPrintRoute:"Print Emergency Route",btnBackCheck:"Back to Verification",
+indStep2:"Step 2: Operational Evaluation",qEvalTitle:"Four Initial Questions",qEvalDesc:"Do not enter usernames, passwords, bank pins, or sensitive identity documents.",labelQ1:"1. What primarily happened?",labelQ2:"2. Have you already contacted an official institution?",labelQ3:"3. What is your primary concern right now?",labelQ4:"4. When did this incident start?",btnSubmitTriage:"Evaluate Case & Generate Plan",
+indStep3:"Step 3: Classification & Action Plan",resTypeLabel:"Detected Incident Type:",resChecklistTitle:"Action Checklist by Institution (4 to 6 steps):",btnExportPkg:"Export Local Package",btnReEval:"Re-evaluate Data",exportMsg:"File exported locally in your browser. No data was sent to any server.",footerText:"This tool does not store personal data. It does not replace the police, the bank, or the Public Prosecutor's Office."
+}};
 
-    function toggleLanguage() { currentLang = currentLang === 'es' ? 'en' : 'es'; applyTranslations(); if (!document.getElementById('step-results').classList.contains('hidden')) { processTriage(); } }
-
-    function applyTranslations() {
-      const t = translations[currentLang];
-      document.getElementById('app-title').textContent = t.appTitle;
-      document.getElementById('app-banner').textContent = t.appBanner;
-      document.getElementById('lang-btn').textContent = t.langToggle;
-      document.getElementById('btn-nav-intake').textContent = t.navIntake;
-      document.getElementById('btn-nav-wait').textContent = t.navWait;
-      document.querySelectorAll('[data-i18n="ai-tag"]').forEach(el => { el.textContent = t.aiTag; });
-      document.getElementById('wait-title').textContent = t.waitTitle;
-      document.getElementById('wait-subtitle').textContent = t.waitSubtitle;
-      document.getElementById('th-inst').textContent = t.thInst;
-      document.getElementById('th-channel').textContent = t.thChannel;
-      document.getElementById('th-wait').textContent = t.thWait;
-      document.getElementById('th-status').textContent = t.thStatus;
-      document.getElementById('row-pc-c').textContent = t.rowPcC;
-      document.getElementById('row-pc-w').textContent = t.rowPcW;
-      document.getElementById('row-pc-s').textContent = t.rowPcS;
-      document.getElementById('row-fg-c').textContent = t.rowFgC;
-      document.getElementById('row-fg-w').textContent = t.rowFgW;
-      document.getElementById('row-fg-s').textContent = t.rowFgS;
-      document.getElementById('row-ine-c').textContent = t.rowIneC;
-      document.getElementById('row-ine-w').textContent = t.rowIneW;
-      document.getElementById('row-ine-s').textContent = t.rowIneS;
-      document.getElementById('row-con-c').textContent = t.rowConC;
-      document.getElementById('row-con-w').textContent = t.rowConW;
-      document.getElementById('row-con-s').textContent = t.rowConS;
-      document.getElementById('row-bank-c').textContent = t.rowBankC;
-      document.getElementById('row-bank-w').textContent = t.rowBankW;
-      document.getElementById('row-bank-s').textContent = t.rowBankS;
-      document.getElementById('ind-step-1').textContent = t.indStep1;
-      document.getElementById('q-device').textContent = t.qDevice;
-      document.getElementById('q-device-desc').textContent = t.qDeviceDesc;
-      document.getElementById('btn-device-yes').textContent = t.btnDeviceYes;
-      document.getElementById('btn-device-no').textContent = t.btnDeviceNo;
-      document.getElementById('unsafe-alert-title').textContent = t.unsafeAlertTitle;
-      document.getElementById('unsafe-alert-desc').textContent = t.unsafeAlertDesc;
-      document.getElementById('unsafe-steps-title').textContent = t.unsafeStepsTitle;
-      document.getElementById('unsafe-li-1').innerHTML = '<strong>' + t.unsafeLi1.split(':')[0] + ':</strong>' + t.unsafeLi1.substring(t.unsafeLi1.indexOf(':') + 1);
-      document.getElementById('unsafe-li-2').innerHTML = '<strong>' + t.unsafeLi2.split(':')[0] + ':</strong>' + t.unsafeLi2.substring(t.unsafeLi2.indexOf(':') + 1);
-      document.getElementById('unsafe-li-3').innerHTML = '<strong>' + t.unsafeLi3.split(':')[0] + ':</strong>' + t.unsafeLi3.substring(t.unsafeLi3.indexOf(':') + 1);
-      document.getElementById('btn-print-route').textContent = t.btnPrintRoute;
-      document.getElementById('btn-back-check').textContent = t.btnBackCheck;
-      document.getElementById('ind-step-2').textContent = t.indStep2;
-      document.getElementById('q-eval-title').textContent = t.qEvalTitle;
-      document.getElementById('q-eval-desc').textContent = t.qEvalDesc;
-      document.getElementById('label-q1').textContent = t.labelQ1;
-      document.getElementById('opt-q1-1').textContent = t.optQ1_1;
-      document.getElementById('opt-q1-2').textContent = t.optQ1_2;
-      document.getElementById('opt-q1-3').textContent = t.optQ1_3;
-      document.getElementById('opt-q1-4').textContent = t.optQ1_4;
-      document.getElementById('label-q2').textContent = t.label
+function applyTranslations(){
+  const t = T[currentLang];
+  document.getElementById('app-title').textContent=t.appTitle;
+  document.getElementById('app-banner').textContent=t.appBanner;
+  document.getElementById('lang-btn').textContent=t.langToggle;
+  document.getElementById('btn-nav-intake').textContent=t.navIntake;
+  document.getElementById('btn-nav-wait').textContent=t.navWait;
+  document.querySelectorAll('.ai-badge').forEach(e=>e.textContent=t.aiTag);
+  document.getElementById('wait-title').textContent=t.waitTitle;
+  document.getElementById('wait-subtitle').textContent=t.waitSubtitle;
+  document.getElementById('th-inst').textContent=t.thInst;
+  document.getElementById('th-channel').textContent=t.thChannel;
+  document.getElementById('th-wait').textContent=t.thWait;
+  document.getElementById('th-status').textContent=t.thStatus;
+  document.getElementById('row-pc-c').textContent=t.rowPcC;
+  document.getElementById('row-pc-w').textContent=t.rowPcW;
+  document.getElementById('row-pc-s').textContent=t.rowPcS;
+  document.getElementById('row-fg-c').textContent=t.rowFgC;
+  document.getElementById('row-fg-w').textContent=t.rowFgW;
+  document.getElementById('row-fg-s').textContent=t.rowFgS;
+  document.getElementById('row-ine-c').textContent=t.rowIneC;
+  document.getElementById('row-ine-w').textContent=t.rowIneW;
+  document.getElementById('row-ine-s').textContent=t.rowIneS;
+  document.getElementById('row-con-c').textContent=t.rowConC;
+  document.getElementById('row-con-w').textContent=t.rowConW;
+  document.getElementById('row-con-s').textContent=t.rowConS;
+  document.getElementById('row-bank-c').textContent=t.rowBankC;
+  document.getElementById('row-bank-w').textContent=t.rowBankW;
+  document.getElementById('row-bank-s').textContent=t.rowBankS;
+  document.getElementById('ind-step-1').textContent=t.indStep1;
+  document.getElementById('q-device').textContent=t.qDevice;
+  document.getElementById('q-device-desc').textContent=t.qDeviceDesc;
+  document.getElementById('btn-device-yes').textContent=t.btnDeviceYes;
+  document.getElementById('btn-device-no').textContent=t.btnDeviceNo;
+  document.getElementById('unsafe-alert-title').textContent=t.unsafeAlertTitle;
+  document.getElementById('unsafe-alert-desc').textContent=t.unsafeAlertDesc;
+  document.getElementById('unsafe-steps-title').textContent=t.unsafeStepsTitle;
+  document.getElementById('btn-print-route').textContent=t.btnPrintRoute;
+  document.getElementById('btn-back-check').textContent=t.btnBackCheck;
+  document.getElementById('ind-step-2').textContent=t.indStep2;
+  document.getElementById('q-eval-title').textContent=t.qEvalTitle;
+  document.getElementById('q-eval-desc').textContent=t.qEvalDesc;
+  document.getElementById('label-q1').textContent=t.labelQ1;
+  document.getElementById('label-q2').textContent=t.labelQ2;
+  document.getElementById('label-q3').textContent=t.labelQ3;
+  document.getElementById('label-q4').textContent=t.labelQ4;
+  document.getElementById('btn-submit-triage').textContent=t.btnSubmitTriage;
+  document.getElementById('ind-step-3').textContent=t.indStep3;
+  document.getElementById('res-type-label').textContent=t.resTypeLabel;
+  document.getElementById('res-checklist-title').textContent=t.resChecklistTitle;
+  document.getElementById('btn-export-pkg').textContent=t.btnExportPkg;
+  document.getElementById('btn-re-eval').textContent=t.btnReEval;
+  document.getElementById('export-msg').textContent=t.exportMsg;
+  document.getElementById('footer-text').textContent=t.footerText;
+  if(!document.getElementById('step-results').classList.contains('hidden')){processTriage();}
+}
+function toggleLanguage(){currentLang=currentLang==='es'?'en':'es';applyTranslations();}
+function showIntakeSection(){document.getElementById('wait-times-section').classList.add('hidden');document.getElementById('step-device').classList.remove('hidden');document.getElementById('step-unsafe-device').classList.add('hidden');document.getElementById('step-questions').classList.add('hidden');document.getElementById('step-results').classList.add('hidden');}
+function showWaitTimesSection(){document.getElementById('wait-times-section').classList.remove('hidden');document.getElementById('step-device').classList.add('hidden');document.getElementById('step-unsafe-device').classList.add('hidden');document.getElementById('step-questions').classList.add('hidden');document.getElementById('step-results').classList.add('hidden');}
+function handleDeviceSecurity(safe){if(safe){document.getElementById('step-device').classList.add('hidden');document.getElementById('step-questions').classList.remove('hidden');}else{document.getElementById('step-device').classList.add('hidden');document.getElementById('step-unsafe-device').classList.remove('hidden');}}
+function resetToDeviceCheck(){document.getElementById('step-unsafe-device').classList.add('hidden');document.getElementById('step-device').classList.remove('hidden');}
+function resetToQuestions(){document.getElementById('step-results').classList.add('hidden');document.getElementById('step-questions').classList.remove('hidden');}
+function processTriage(){
+  const qWhat=document.getElementById('q1-what').value;
+  const qInst=document.getElementById('q2-institution').value;
+  const qWorry=document.getElementById('q3-worry').value;
+  const qWhen=document.getElementById('q4-when').value;
+  let priority='standard';
+  if(qWhen==='first_hour'||qWorry==='money_loss'||qWhat==='unknown_account'){priority='urgent';}
+  else if(qWhen==='few_days'&&qInst!=='none'){priority='routine';}
+  currentClassification=qWhat;currentPriority=priority;
+  renderResults(qWhat,priority);
+  document.getElementById('step-questions').classList.add('hidden');
+  document.getElementById('step-results').classList.remove('hidden');
+}
+function renderResults(c,p){
+  const t=T[currentLang];
+  const titles={account_takeover:currentLang==='es'?"Toma de Control de Cuenta":"Account Takeover",impersonation:currentLang==='es'?"Suplantación Activa":"Active Impersonation",unknown_account:currentLang==='es'?"Cuenta Financiera No Reconocida":"Unknown Financial Account",exposure_worry:currentLang==='es'?"Riesgo de Exposición de Identidad":"Identity Exposure Risk"};
+  const pri={urgent:{label:currentLang==='es'?"Urgente":"Urgent",cls:"priority-urgent"},standard:{label:currentLang==='es'?"Estándar":"Standard",cls:"priority-standard"},routine:{label:currentLang==='es'?"Rutinario":"Routine",cls:"priority-routine"}};
+  document.getElementById('res-classification-title').textContent=titles[c]||c;
+  const b=document.getElementById('res-priority-badge');b.textContent=pri[p].label;b.className='priority-badge '+pri[p].cls;
+  document.getElementById('res-priority-rationale').innerHTML=currentLang==='es'?'<strong>Dictamen preliminar:</strong> Se detecta un vector activo. Las acciones deben realizarse de inmediato.':'<strong>Preliminary assessment:</strong> An active vector was detected. Actions should be taken immediately.';
+  currentSteps=getSteps(c,currentLang);
+  const ul=document.getElementById('plan-checklist');ul.innerHTML='';
+  currentSteps.forEach((s,i)=>{const li=document.createElement('li');li.className='checklist-item';li.innerHTML='<div><span class="institution-tag">['+s.institution+']</span> <strong>'+(i+1)+'. '+s.title+'</strong></div><div style="font-size:.9rem;margin-top:.2rem;">'+s.action+'</div>';ul.appendChild(li);});
+}
+function getSteps(c,lang){
+  if(lang==='es'){return[
+    {institution:"Policía Cibernética",title:"Reporte preventivo y folio",action:"Llama a la línea oficial (089 o policía cibernética local). Informa la cuenta o número agresor para registrar el folio oficial."},
+    {institution:"Banco / Fintech",title:"Bloqueo de instrumentos y alerta de transferencias",action:"Contacta a la línea de fraudes del banco o fintech para congelar productos y objetar cuentas abiertas fraudulentamente."},
+    {institution:"Fiscalía General",title:"Denuncia formal de hechos (Art. 223 CNPP)",action:"Acude al Ministerio Público con dos copias de tu cronología y capturas impresas para que te sellen el acuse de recibo."},
+    {institution:"INE",title:"Cancelación preventiva de credencial",action:"Comunícate a INETel (800 433 2000) o acude a módulo para invalidar la credencial expuesta y solicitar reemplazo."},
+    {institution:"CONDUSEF",title:"Reclamación formal ante entidades financieras",action:"Ingresa tu queja en el portal de CONDUSEF detallando el folio bancario si la institución se niega a cancelar la cuenta."}
+  ];}
+  return[
+    {institution:"Cyber Police",title:"Preventive intake & incident reference ID",action:"Call line 089 or local cyber police. Report the malicious phone/profile to establish an official tracking record."},
+    {institution:"Bank / Fintech Provider",title:"Emergency freeze & fraud contestation",action:"Contact the provider's fraud line to freeze compromised cards and dispute accounts opened using your identity."},
+    {institution:"State Prosecutor",title:"Formal criminal complaint (Art. 223 CNPP)",action:"Visit the prosecutor intake desk with two printed copies of your timeline and exhibits to receive a stamped acknowledgment."},
+    {institution:"INE",title:"Voter card invalidation & reissuance",action:"Call INETel (800 433 2000) or visit an office to flag the leaked card as compromised and request reissuance."},
+    {institution:"CONDUSEF",title:"Formal regulatory complaint",action:"Log your claim through the CONDUSEF online portal if any financial institution fails to acknowledge unauthorized accounts."}
+  ];
+}
+function exportLocalPackage(){
+  const ts=new Date().toISOString();
+  let txt='==========================================\nFIRST HOUR - LOCAL ASSISTANCE SUMMARY\n(Locally generated - No personal data)\nGenerated: '+ts+'\n==========================================\n\nCLASSIFICATION: '+currentClassification+'\nPRIORITY: '+currentPriority+'\n\nINSTITUTIONAL ROADMAP:\n------------------------------------------\n';
+  currentSteps.forEach((s,i)=>{txt+=(i+1)+'. ['+s.institution+'] '+s.title+'\n   Action: '+s.action+'\n\n';});
+  txt+='------------------------------------------\nLEGAL NOTICE:\nThis tool does not store personal data or passwords.\nIt does not replace a formal complaint before the Public Prosecutor, CONDUSEF, INE, or the bank.\n==========================================\n';
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='first-hour-packet-'+Date.now()+'.txt';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  const fb=document.getElementById('export-feedback');fb.classList.remove('hidden');setTimeout(()=>fb.classList.add('hidden'),5000);
+}
+document.addEventListener('DOMContentLoaded',function(){applyTranslations();});
+</script>
+</body>
+</html>
